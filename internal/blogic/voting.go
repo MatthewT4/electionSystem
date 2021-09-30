@@ -4,6 +4,7 @@ import (
 	"context"
 	"electionSystem/internal/db"
 	"electionSystem/internal/struction"
+	"fmt"
 	"go.mongodb.org/mongo-driver/mongo"
 	"log"
 	"math/rand"
@@ -12,22 +13,69 @@ import (
 )
 
 type BVoting struct {
-	DB db.IVoting
+	DBVoit db.IVoting
+	DBElec db.IElections
 }
 
 func CreateBVoting(dbs *mongo.Database) *BVoting {
-	return &BVoting{DB: db.NewVotRepo(dbs)}
+	return &BVoting{DBVoit: db.NewVotRepo(dbs), DBElec: db.NewElectionRepo(dbs)}
+}
+
+func (v *BVoting) Vote(token string, VotingCandidate string) (int, string) {
+	//получить нф о токене
+	voter, err := v.DBVoit.GetInfoInToken(context.TODO(), token)
+	if err != nil {
+		return 404, ""
+	}
+	//проверить на валидность и отсуствие голоса
+	if voter.Valid != true {
+		return 403, "token is not valid"
+	}
+	if voter.Voted != false {
+		return 423, "token is voted already"
+	}
+	//получить данные голосования
+	election, er := v.DBElec.GetElection(context.TODO(), voter.NameElection)
+	if er != nil {
+		return 500, ""
+	}
+
+	//проверить голосоване на даты
+	fmt.Println(election.StartDate.Unix())
+	fmt.Println(time.Now().Unix())
+	if election.StartDate.Unix() > time.Now().Unix() {
+		return 404, "election is not start"
+	}
+	if election.EndDate.Unix() < time.Now().Unix() {
+		return 404, "election is stops"
+	}
+
+	//поставить на токен наличие голоса, в запросе указать проверку на валидность и голос
+	countUpd, errr := v.DBVoit.VotedToken(context.TODO(), token)
+	if errr != nil {
+		return 500, ""
+	}
+	if countUpd < 1 {
+		return 400, ""
+	}
+	//приплюсовать голос кандидату
+	cUpd, e := v.DBElec.VotingIncrement(context.TODO(), voter.NameElection, VotingCandidate)
+	if e != nil {
+		return 500, ""
+	}
+	fmt.Printf("token: %v candidate: %v Return Election Update: %v", token, VotingCandidate, cUpd)
+	return 200, "OK"
 }
 
 func (b *BVoting) BAddVoted() {
 	var data = struction.Voter{
-		Token: "ffff",
+		Token:        "ffff",
 		NameElection: "test",
-		Voted: true,
-		Valid: true,
+		Voted:        false,
+		Valid:        true,
 	}
 
-	_, err := b.DB.AddVoter(context.TODO(), data)
+	_, err := b.DBVoit.AddVoter(context.TODO(), data)
 	if err != nil {
 		log.Fatalln(err.Error())
 	}
@@ -39,7 +87,7 @@ func GenerateToken(passwordLength int) string {
 	//specialCharSet := "!@#$%&*"
 	numberSet := "0123456789"
 	allCharSet := lowerCharSet + upperCharSet /*+ specialCharSet*/ + numberSet
-	time.Sleep(1000*time.Millisecond)
+	time.Sleep(1000 * time.Millisecond)
 	rand.Seed(time.Now().Unix())
 	minSpecialChar := 1
 	minNum := 1
@@ -48,11 +96,11 @@ func GenerateToken(passwordLength int) string {
 	var password strings.Builder
 
 	/*
-	//Set special character
-	for i := 0; i < minSpecialChar; i++ {
-		random := rand.Intn(len(specialCharSet))
-		password.WriteString(string(specialCharSet[random]))
-	}*/
+		//Set special character
+		for i := 0; i < minSpecialChar; i++ {
+			random := rand.Intn(len(specialCharSet))
+			password.WriteString(string(specialCharSet[random]))
+		}*/
 
 	//Set numeric
 	for i := 0; i < minNum; i++ {

@@ -8,16 +8,18 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"log"
 )
+
 type IVoting interface {
 	GetInfoInToken(ctx context.Context, token string) (struction.Voter, error)
 	AddVoter(ctx context.Context, voter struction.Voter) (interface{}, error)
+	VotedToken(ctx context.Context, token string) (int, error)
 }
 
 type Voting struct {
-	Valid bool 				`bson:"valid"`
-	Voted bool				`bson:"voted"`
-	Token string			`bson:"token"`
-	NameElection string	`bson:"name_election"`
+	Valid        bool   `bson:"valid"`
+	Voted        bool   `bson:"voted"`
+	Token        string `bson:"token"`
+	NameElection string `bson:"name_election"`
 }
 
 type VotRepo struct {
@@ -42,9 +44,20 @@ func (v *VotRepo) AddVoter(ctx context.Context, voter struction.Voter) (interfac
 		return 0, er
 	}
 	result, err := v.collection.InsertOne(ctx, bs)
-	fmt.Println("fffff")
 	if err != nil {
 		return 0, err
 	}
 	return result.InsertedID, err
+}
+
+func (v *VotRepo) VotedToken(ctx context.Context, token string) (int, error) {
+	filter := bson.M{"token": token, "voted": false, "valid": true}
+	update := bson.D{
+		{"$set", bson.D{
+			{"voted", true},
+		}},
+	}
+	updResult, err := v.collection.UpdateOne(ctx, filter, update)
+	fmt.Println(updResult)
+	return int(updResult.MatchedCount), err
 }

@@ -13,10 +13,12 @@ func StartServer() {
 		log.Fatal(err)
 	}
 	name := "ElectionsDB"
-	for i := 0; i < 20; i++ {
+	/*for i := 0; i < 20; i++ {
 		fmt.Println(blogic.GenerateToken(10))
-	}
+	}*/
 	db := client.Database(name)
 	logic := blogic.CreateBVoting(db)
-	logic.BAddVoted()
+	res, strr := logic.Vote("ffff", "Orudzev")
+	fmt.Println(string(res) + " " + strr)
+	//logic.BAddVoted()
 }
