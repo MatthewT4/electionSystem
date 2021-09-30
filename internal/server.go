@@ -2,6 +2,7 @@ package internal
 
 import (
 	"electionSystem/internal/blogic"
+	"electionSystem/internal/http"
 	mongodb "electionSystem/pkg/mongoDB"
 	"fmt"
 	"log"
@@ -17,6 +18,9 @@ func StartServer() {
 		fmt.Println(blogic.GenerateToken(10))
 	}*/
 	db := client.Database(name)
+	router := http.NewRouter(db)
+	router.Start() // Start http server
+
 	logic := blogic.CreateBVoting(db)
 	res, strr := logic.Vote("ffff", "Orudzev")
 	fmt.Println(string(res) + " " + strr)

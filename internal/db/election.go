@@ -3,7 +3,6 @@ package db
 import (
 	"context"
 	"electionSystem/internal/struction"
-	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -35,6 +34,5 @@ func (e *ElectionRepo) VotingIncrement(ctx context.Context, nameElection, Voting
 		}},
 	}
 	updResult, err := e.collection.UpdateOne(ctx, filter, update)
-	fmt.Println(updResult)
 	return int(updResult.MatchedCount), err
 }

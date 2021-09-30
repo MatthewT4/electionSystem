@@ -3,7 +3,6 @@ package db
 import (
 	"context"
 	"electionSystem/internal/struction"
-	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"log"
@@ -58,6 +57,5 @@ func (v *VotRepo) VotedToken(ctx context.Context, token string) (int, error) {
 		}},
 	}
 	updResult, err := v.collection.UpdateOne(ctx, filter, update)
-	fmt.Println(updResult)
 	return int(updResult.MatchedCount), err
 }

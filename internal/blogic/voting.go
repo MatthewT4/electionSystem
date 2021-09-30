@@ -12,6 +12,10 @@ import (
 	"time"
 )
 
+type IBVoting interface {
+	Vote(token string, VotingCandidate string) (int, string)
+}
+
 type BVoting struct {
 	DBVoit db.IVoting
 	DBElec db.IElections
@@ -41,8 +45,6 @@ func (v *BVoting) Vote(token string, VotingCandidate string) (int, string) {
 	}
 
 	//проверить голосоване на даты
-	fmt.Println(election.StartDate.Unix())
-	fmt.Println(time.Now().Unix())
 	if election.StartDate.Unix() > time.Now().Unix() {
 		return 404, "election is not start"
 	}
@@ -67,10 +69,10 @@ func (v *BVoting) Vote(token string, VotingCandidate string) (int, string) {
 	return 200, "OK"
 }
 
-func (b *BVoting) BAddVoted() {
+func (b *BVoting) BAddVoted(token, nameElection string) {
 	var data = struction.Voter{
-		Token:        "ffff",
-		NameElection: "test",
+		Token:        token,
+		NameElection: nameElection,
 		Voted:        false,
 		Valid:        true,
 	}
@@ -87,7 +89,6 @@ func GenerateToken(passwordLength int) string {
 	//specialCharSet := "!@#$%&*"
 	numberSet := "0123456789"
 	allCharSet := lowerCharSet + upperCharSet /*+ specialCharSet*/ + numberSet
-	time.Sleep(1000 * time.Millisecond)
 	rand.Seed(time.Now().Unix())
 	minSpecialChar := 1
 	minNum := 1
