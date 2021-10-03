@@ -14,6 +14,7 @@ import (
 
 type IBVoting interface {
 	Vote(token string, VotingCandidate string) (int, string)
+	Login(token string) (bool, string)
 }
 
 type BVoting struct {
@@ -23,6 +24,20 @@ type BVoting struct {
 
 func CreateBVoting(dbs *mongo.Database) *BVoting {
 	return &BVoting{DBVoit: db.NewVotRepo(dbs), DBElec: db.NewElectionRepo(dbs)}
+}
+
+func (v *BVoting) Login(token string) (bool, string) {
+	voter, err := v.DBVoit.GetInfoInToken(context.TODO(), token)
+	if err != nil {
+		return false, err.Error()
+	}
+	if voter.Valid != true {
+		return false, "token is not valid"
+	}
+	if voter.Voted == true {
+		return false, "token is voted already"
+	}
+	return true, ""
 }
 
 func (v *BVoting) Vote(token string, VotingCandidate string) (int, string) {

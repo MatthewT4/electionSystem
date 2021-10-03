@@ -20,9 +20,13 @@ func NewRouter(db *mongo.Database) *Router {
 
 func (rout *Router) Start() {
 	fmt.Println("Server Started")
+	staticHandler := http.StripPrefix("/data/", http.FileServer(http.Dir("/static/stat")))
 	rou := mux.NewRouter()
 	//r.HandleFunc("/getdata", rout.GetData)
 	rou.HandleFunc("/voit", rout.Voit)
+	rou.HandleFunc("/", rout.FormCandidates)
+	rou.HandleFunc("/login", rout.Login)
+	rou.Handle("/data/", staticHandler)
 	//r.HandleFunc("/screen_register", rout.NewScreen)
 	//rou.Handle("/", r)
 	/*
