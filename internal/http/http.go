@@ -20,9 +20,11 @@ func NewRouter(db *mongo.Database) *Router {
 
 func (rout *Router) Start() {
 	fmt.Println("Server Started")
-	staticHandler := http.StripPrefix("/data/", http.FileServer(http.Dir("/static/stat")))
+	//fs := http.FileServer(http.Dir("static"))
+	staticHandler := http.StripPrefix("/data/", http.FileServer(http.Dir("static")))
 	rou := mux.NewRouter()
 	//r.HandleFunc("/getdata", rout.GetData)
+	//rou.Handle("/data/", staticHandler)
 	rou.HandleFunc("/voit", rout.Voit)
 	rou.HandleFunc("/", rout.FormCandidates)
 	rou.HandleFunc("/login", rout.Login)
@@ -46,7 +48,7 @@ func (rout *Router) Start() {
 
 	srv := &http.Server{
 		Handler: rou,
-		Addr:    ":8000",
+		Addr:    ":80",
 		// Good practice: enforce timeouts for servers you create!
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,

@@ -1,12 +1,8 @@
 <!DOCTYPE html>
 <html>
  <head>
-  <meta charset="utf-8">
-  <title>Авторизация</title>
-  <link rel="stylesheet" href="/data/style.css">
-  <style>
-
-.login-page {
+	<style>
+  .login-page {
   width: 360px;
   padding: 8% 0 0;
   margin: auto;
@@ -15,9 +11,8 @@
   position: relative;
   z-index: 1;
   background: #FFFFFF;
-  max-width: 360px;
   margin: 0 auto 100px;
-  padding: 45px;
+  padding: 11%;
   text-align: center;
   box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
 }
@@ -25,7 +20,6 @@
   font-family: "Roboto", sans-serif;
   outline: 0;
   background: #f2f2f2;
-  width: 100%;
   border: 0;
   margin: 0 0 15px;
   padding: 15px;
@@ -103,16 +97,35 @@ body {
   font-family: "Roboto", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;      
+  margin: 0;
 }
-  </style>
+.candidate {
+  text-align: left;
+}
+hr {
+  margin-top: -6%;
+  margin-bottom: 5%;
+  padding: 0;
+  height: 0;
+  border: none;
+  border-top: 2px dotted #ddd;
+}
+.top {
+  margin-top: 4%;
+}
+</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Авторизация</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
  </head>
  <body>
   <div class="login-page">
   <div class="form">
     <form class="login-form" action="/login">
-		<p class="message">Введите токен:</p>
-      <input type="text" name="token" placeholder="token"/>
-      <button>Авторизоваться</button>
+		<p class="message">Введите токен:</p><br>
+      <input type="text" name="token" placeholder="Токен авторизации"style="width: 100%;" />
+      <button class="top">Авторизоваться</button>
     </form>
   </div>
 </div>
