@@ -29,6 +29,7 @@ func (rout *Router) Vote(w http.ResponseWriter, r *http.Request) {
 	OnlyVoitVar.Token = r.FormValue("token")
 	OnlyVoitVar.Candidate = r.FormValue("candidate")
 	rout.infoLog.Printf("[VOTE]: token: %v candidate: %v", OnlyVoitVar.Token, OnlyVoitVar.Candidate)
+	fmt.Printf("[VOTE]: token: %v candidate: %v", OnlyVoitVar.Token, OnlyVoitVar.Candidate)
 	if OnlyVoitVar.Candidate == "" {
 		rout.infoLog.Printf("[VOTE]: candidate is null, token: %v", OnlyVoitVar.Token)
 		var Data struct {
@@ -44,7 +45,6 @@ func (rout *Router) Vote(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "token is null :(", 404)
 		return
 	}
-	rout.infoLog.Printf(" [VOTE]:token: %v, candidate: %v", OnlyVoitVar.Token, OnlyVoitVar.Candidate)
 	//fmt.Println(OnlyVoitVar.Token + "   " + OnlyVoitVar.Candidate)
 	/*
 		body, err := ioutil.ReadAll(r.Body)

@@ -59,10 +59,10 @@ func (v *BVoting) Vote(token string, VotingCandidate string) (int, string) {
 	}
 	//проверить на валидность и отсуствие голоса
 	if voter.Valid != true {
-		return 403, "token is not valid"
+		return 403, "Токен не валиден"
 	}
 	if voter.Voted != false {
-		return 423, "token is voted already"
+		return 423, "Токен уже был использован"
 	}
 	//получить данные голосования
 	election, er := v.DBElec.GetElection(context.TODO(), voter.NameElection)
@@ -72,10 +72,10 @@ func (v *BVoting) Vote(token string, VotingCandidate string) (int, string) {
 
 	//проверить голосоване на даты
 	if election.StartDate.Unix() > time.Now().Unix() {
-		return 404, "election is not start"
+		return 404, "Голосование ещё не началось"
 	}
 	if election.EndDate.Unix() < time.Now().Unix() {
-		return 404, "election is stops"
+		return 404, "Голосование уже закончилось"
 	}
 
 	//поставить на токен наличие голоса, в запросе указать проверку на валидность и голос
