@@ -5,27 +5,40 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/mongo"
+	"html/template"
 	"log"
 	"net/http"
+	"os"
 	"time"
 )
 
 type Router struct {
-	ser blogic.IBVoting
+	ser             blogic.IBVoting
+	infoLog         *log.Logger
+	MessTemplate    *template.Template
+	ShablonTemplate *template.Template
 }
 
 func NewRouter(db *mongo.Database) *Router {
-	return &Router{blogic.CreateBVoting(db)}
+	f, err := os.OpenFile("info.log", os.O_RDWR|os.O_CREATE, 0666)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return &Router{blogic.CreateBVoting(db),
+		log.New(f, "INFO\t", log.Ldate|log.Ltime),
+		template.Must(template.ParseFiles("static/message.html")),
+		template.Must(template.ParseFiles("static/shabl.html"))}
 }
 
 func (rout *Router) Start() {
+	rout.infoLog.Println("Server Started")
 	fmt.Println("Server Started")
 	//fs := http.FileServer(http.Dir("static"))
 	staticHandler := http.StripPrefix("/data/", http.FileServer(http.Dir("static")))
 	rou := mux.NewRouter()
-	//r.HandleFunc("/getdata", rout.GetData)
+	rou.HandleFunc("/get_data", rout.GetData)
 	//rou.Handle("/data/", staticHandler)
-	rou.HandleFunc("/voit", rout.Voit)
+	rou.HandleFunc("/vote", rout.Vote)
 	rou.HandleFunc("/", rout.FormCandidates)
 	rou.HandleFunc("/login", rout.Login)
 	rou.Handle("/data/", staticHandler)

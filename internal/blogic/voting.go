@@ -4,6 +4,7 @@ import (
 	"context"
 	"electionSystem/internal/db"
 	"electionSystem/internal/struction"
+	"encoding/json"
 	"fmt"
 	"go.mongodb.org/mongo-driver/mongo"
 	"log"
@@ -15,6 +16,8 @@ import (
 type IBVoting interface {
 	Vote(token string, VotingCandidate string) (int, string)
 	Login(token string) (bool, string)
+	GetVoteInElection(nameElection string) (int, string)
+	GetCandidates(nameElection string) (map[string]string, error)
 }
 
 type BVoting struct {
@@ -25,19 +28,27 @@ type BVoting struct {
 func CreateBVoting(dbs *mongo.Database) *BVoting {
 	return &BVoting{DBVoit: db.NewVotRepo(dbs), DBElec: db.NewElectionRepo(dbs)}
 }
-
+func (v *BVoting) GetCandidates(nameElection string) (map[string]string, error) {
+	elect, err := v.DBElec.GetElection(context.TODO(), nameElection)
+	return elect.ElectionCandidates, err
+}
 func (v *BVoting) Login(token string) (bool, string) {
 	voter, err := v.DBVoit.GetInfoInToken(context.TODO(), token)
 	if err != nil {
+		if err.Error() == "mongo: no documents in result" {
+			return false, "Токен не найден"
+		}
 		return false, err.Error()
 	}
 	if voter.Valid != true {
-		return false, "token is not valid"
+		return false, "Токен не валиден"
+		//return false, "token is not valid"
 	}
 	if voter.Voted == true {
-		return false, "token is voted already"
+		//return false, "token is voted already"
+		return false, "Токен уже был использован"
 	}
-	return true, ""
+	return true, voter.NameElection
 }
 
 func (v *BVoting) Vote(token string, VotingCandidate string) (int, string) {
@@ -96,6 +107,18 @@ func (b *BVoting) BAddVoted(token, nameElection string) {
 	if err != nil {
 		log.Fatalln(err.Error())
 	}
+}
+
+func (b *BVoting) GetVoteInElection(nameElection string) (int, string) {
+	elect, err := b.DBElec.GetElection(context.TODO(), nameElection)
+	if err != nil {
+		return 400, err.Error()
+	}
+	jss, er := json.Marshal(elect.ElectoralVotes)
+	if er != nil {
+		return 400, er.Error()
+	}
+	return 200, string(jss)
 }
 
 func GenerateToken(passwordLength int) string {

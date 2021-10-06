@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
  <head>
-  <style>
+ <style>
   .login-page {
   width: 360px;
   padding: 8% 0 0;
@@ -112,7 +112,8 @@ hr {
 }
 .top {
   margin-top: 4%;
-}</style>
+}
+</style>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Голосование</title>
@@ -121,17 +122,9 @@ hr {
  <body>
  <div class="login-page">
   <div class="form">
-    <form class="login-form" style="position:static;"action="/vote">
-		<p class="message">Выберите кандидата:</p><br>
-		<input type="hidden" name="token" value="{{.Token}}">
-	{{range $key, $value := .Users}}
-		<div>
-			<p class="candidate"><input style="position:static" name="candidate" type="radio" value="{{$key}}"> {{$value}}</p>
-		  <hr>
-		</div>
-	{{end}}
-    <br><button>Проголосовать</button>
-    </form>
+		<h1 class="message">Упс! Похоже что-то пошло не так</h1>
+		<p class="message">{{.Mess}}</p>
+		<p class="message"><br>Попробуйте снова или обратитесь к администратору</p>
   </div>
  </body>
 </html>

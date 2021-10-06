@@ -10,10 +10,10 @@ type Voter struct {
 }
 
 type Election struct {
-	Name               string         `bson:"name"`
-	StartDate          time.Time      `bson:"start_date"`
-	EndDate            time.Time      `bson:"end_date"`
-	ElectionCandidates []string       `bson:"election_candidates"`
-	ElectoralVotes     map[string]int `bson:"electoral_votes"`
-	CoundVoting        int            `bson:"cound_voting"`
+	Name               string            `bson:"name"`
+	StartDate          time.Time         `bson:"start_date"`
+	EndDate            time.Time         `bson:"end_date"`
+	ElectionCandidates map[string]string `bson:"election_candidates"`
+	ElectoralVotes     map[string]int    `bson:"electoral_votes"`
+	CoundVoting        int               `bson:"cound_voting"`
 }
