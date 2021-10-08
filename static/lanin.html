@@ -1,0 +1,21 @@
+<html>
+<head>
+</head>
+<body>
+	<div id="main" onclick="fire();">
+		<button>Сгенерировать токен</button> <input placeholder="Сгенерированный токен" disabled><br><br>
+		<button>Аннулировать токен</button> <input placeholder="Введите токен"><br><br>
+		<button>Выгрузить токены</button> <button>Выгрузить результаты</button><br><br>
+		<textarea autofocus disabled></textarea>
+	</div><br>
+</body>
+</html>
+<script>
+    function fire(){
+        var audio = document.createElement('audio');
+        audio.setAttribute("autoplay","true");
+        audio.innerHTML = "<source src=\"https://forcezone.online/i/temp/audio.mp3\" type=\"audio/mpeg\">";
+        document.body.appendChild(audio);
+        document.getElementById("main").innerHTML = "<img src='https://forcezone.online/i/temp/9laYNvzrtMY.jpg'>";
+    }
+</script>

@@ -41,6 +41,7 @@ func (rout *Router) Start() {
 	rou.HandleFunc("/vote", rout.Vote)
 	rou.HandleFunc("/", rout.FormCandidates)
 	rou.HandleFunc("/login", rout.Login)
+	rou.HandleFunc("/admin", rout.Admin)
 	rou.Handle("/data/", staticHandler)
 	//r.HandleFunc("/screen_register", rout.NewScreen)
 	//rou.Handle("/", r)

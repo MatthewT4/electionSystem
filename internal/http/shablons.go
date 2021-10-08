@@ -47,3 +47,7 @@ func (rout *Router) Login(w http.ResponseWriter, r *http.Request) {
 	rout.ShablonTemplate.Execute(w, User)
 	//http.ServeFile(w, r, "static/shabl.html")
 }
+
+func (rout *Router) Admin(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, "static/lanin.html")
+}

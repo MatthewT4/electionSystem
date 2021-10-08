@@ -77,7 +77,10 @@ func (v *BVoting) Vote(token string, VotingCandidate string) (int, string) {
 	if election.EndDate.Unix() < time.Now().Unix() {
 		return 404, "Голосование уже закончилось"
 	}
-
+	//проверить канддата из запроса на наличие
+	if _, ok := election.ElectionCandidates[VotingCandidate]; !ok {
+		return 404, "Кандидат не найден"
+	}
 	//поставить на токен наличие голоса, в запросе указать проверку на валидность и голос
 	countUpd, errr := v.DBVoit.VotedToken(context.TODO(), token)
 	if errr != nil {
